@@ -4,16 +4,20 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
-URL = "https://ca.indeed.com/new-grad-software-jobs-in-Kitchener"
+URL = "https://ca.indeed.com/new-grad-software-jobs-in-Toronto"
 
 page =  requests.get(URL)
 
 soup = BeautifulSoup(page.text, "html.parser")
-print(soup)
+#print(soup)
+
 jobs = []
 jobCount = 0
 employer = []
 employerCount = 0
+links = []
+company_link = []
+link_counter = 0
 
 def job_title(soup):
 	global jobCount, employerCount
@@ -31,12 +35,12 @@ def job_title(soup):
 			for span in sec_try:
 				employer.append(span.text.strip())
 				employerCount = employerCount + 1
-	return(jobs)
-
+		links.append("https://ca.indeed.com/rc/clk?jk=" + str(div["data-jk"]))			
 
 job_title(soup)
-print(jobs)
-print(employer)
 
-print("Total Jobs:" + str(jobCount))
-print("Total Employers:" + str(employerCount))
+for i in range(0, jobCount):
+	print(jobs[i])
+	print(employer[i])
+	#print(link_counter)
+	print(links[i] + "\n")

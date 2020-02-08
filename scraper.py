@@ -4,43 +4,40 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
-URL = "https://ca.indeed.com/new-grad-software-jobs-in-Toronto"
+class scrape:
+	def __init__(self):
+		self.URL = None
+		self.soup = None
 
-page =  requests.get(URL)
+		self.jobs = []
+		self.employer = []
+		self.links = []
+		self.company_link = []
 
-soup = BeautifulSoup(page.text, "html.parser")
-#print(soup)
+	def search(self, search, location):
+		search_r = search.replace(" ", "-")
+		self.URL = "https://ca.indeed.com/" + search_r + "-jobs-in-" + location
+		print(self.URL)
+		page =  requests.get(self.URL)
+		self.soup = BeautifulSoup(page.text, "html.parser")
 
-jobs = []
-jobCount = 0
-employer = []
-employerCount = 0
-links = []
-company_link = []
-link_counter = 0
+		self.job_title()
 
-def job_title(soup):
-	global jobCount, employerCount
-	for div in soup.find_all(name="div", attrs={"class":"row"}):
-		for a in div.find_all(name="a", attrs={"data-tn-element": "jobTitle"}):
-			jobs.append(a["title"])
-			jobCount = jobCount + 1
-		company = div.find_all(name="span", attrs={"class":"company"})
-		if len(company) > 0:
-			for b in company:
-				employer.append(b.text.strip())
-				employerCount = employerCount + 1
-		else:
-			sec_try = div.find_all(name="span", attrs={"class":"result-link-source"})
-			for span in sec_try:
-				employer.append(span.text.strip())
-				employerCount = employerCount + 1
-		links.append("https://ca.indeed.com/rc/clk?jk=" + str(div["data-jk"]))			
+		return self.jobs, self.employer, self.links, len(self.jobs)
 
-job_title(soup)
+	def job_title(self):
+		for div in self.soup.find_all(name="div", attrs={"class":"row"}):
+			for a in div.find_all(name="a", attrs={"data-tn-element": "jobTitle"}):
+				self.jobs.append(a["title"])
 
-for i in range(0, jobCount):
-	print(jobs[i])
-	print(employer[i])
-	#print(link_counter)
-	print(links[i] + "\n")
+			company = div.find_all(name="span", attrs={"class":"company"})
+			if len(company) > 0:
+				for b in company:
+					self.employer.append(b.text.strip())
+			else:
+				sec_try = div.find_all(name="span", attrs={"class":"result-link-source"})
+				for span in sec_try:
+					self.employer.append(span.text.strip())
+			self.links.append("https://ca.indeed.com/rc/clk?jk=" + str(div["data-jk"]))			
+
+	

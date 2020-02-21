@@ -14,7 +14,7 @@ To run the server for development
 ``` shell
 export FLASK_APP=app.py
 export FLASK_DEBUG=1    # To reload when app.py changes
-flask run
+python app.py
 ```
 
 # References

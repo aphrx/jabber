@@ -20,7 +20,7 @@ from flask_login import (
 )
 
 app = Flask(__name__, template_folder='templates')
-# We can make this secret key as environ variable later to sign cookies if we want
+# We can make this secret key as environ variable later to sign cookies
 app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/jabberDatabase"
 mongo = PyMongo(app)
@@ -32,26 +32,23 @@ login_manager.init_app(app)
 # OAuth 2 client setup
 client = WebApplicationClient(secret.GOOGLE_CLIENT_ID)
 
-# @app.route('/')
-# def index():
-#     test = scraper.scrape()
-#     jobs = [[], [], []]
-#     jobs[0], jobs[1], jobs[2], count = test.search("software developer",
-#                                                    "Kitchener")
-#     return render_template('index.html', jobs=jobs, count=count)
-
 
 @app.route("/")
 def index():
     if current_user.is_authenticated:
-        return ("<p>Hello, {}! You're logged in! Email: {}</p>"
-                "<div><p>Google Profile Picture:</p>"
-                '<img src="{}" alt="Google profile pic"></img></div>'
-                '<a class="button" href="/logout">Logout</a>'.format(
-                    current_user.name, current_user.email,
-                    current_user.profile_pic))
+        # return ("<p>Hello, {}! You're logged in! Email: {}</p>"
+        #         "<div><p>Google Profile Picture:</p>"
+        #         '<img src="{}" alt="Google profile pic"></img></div>'
+        #         '<a class="button" href="/logout">Logout</a>'.format(
+        #             current_user.name, current_user.email,
+        #             current_user.profile_pic))
+        test = scraper.scrape()
+        jobs = [[], [], []]
+        jobs[0], jobs[1], jobs[2], count = test.search("software developer",
+                                                       "Kitchener")
+        return render_template('job_list.html', jobs=jobs, count=count)
     else:
-        return '<a class="button" href="/login">Google Login</a>'
+        return render_template("index.html")
 
 
 def get_google_provider_cfg():
@@ -130,7 +127,7 @@ def callback():
 @app.route("/logout")
 @login_required
 def logout():
-    logout_user()
+    logout_user()               # built-in from flask-login lib
     return redirect(url_for("index"))
 
 

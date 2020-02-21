@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Jabber</title>
+{% endblock %}
+
+{% block body %}
+
+{% for x in range(count) %}
+
+<br>
+<div class="d-flex justify-content-center">
+    <div class="gradient-border">
+        <div id="left">
+            <p><strong> {{jobs[0][x]}}</strong></p>
+            <p>{{jobs[1][x]}}</p>
+        </div>
+        <div id="right">
+            <button type="button" class="btn btn-dark" onclick="location.href='{{jobs[2][x]}}'">Apply</button>
+        </div>
+    </div>
+</div>
+
+
+{% endfor %}
+
+
+{% endblock %}

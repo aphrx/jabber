@@ -1,29 +1,16 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
 
-{% block head %} 
-<title>Jabber</title>
-{% endblock %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+    <title>Jabber</title>
+</head>
 
-{% block body %} 
+<body>
+    <div style="position: fixed;left: 45%;top:50%;">
+      <a class="btn btn-primary" href="/login" role="button">Login with Google</a>
+    </div>
+</body>
 
-    {% for x in range(count) %}
-        
-            <br>
-            <div class="d-flex justify-content-center">
-                <div class="gradient-border">
-                    <div id="left">
-                        <p><strong> {{jobs[0][x]}}</strong></p>
-                        <p>{{jobs[1][x]}}</p>
-                    </div>
-                    <div id="right">
-                        <button type="button" class="btn btn-dark" onclick="location.href='{{jobs[2][x]}}'">Apply</button>
-                    </div>
-                    
-                </div>
-            </div>
-
-                
-    {% endfor %}
-
-
-{% endblock %}
+</html>

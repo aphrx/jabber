@@ -4,3 +4,6 @@ gunicorn
 beautifulsoup4
 requests
 pandas
+oauthlib
+pyOpenSSL
+Flask-Login

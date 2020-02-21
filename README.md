@@ -16,3 +16,7 @@ export FLASK_APP=app.py
 export FLASK_DEBUG=1    # To reload when app.py changes
 flask run
 ```
+
+# References
+
+- https://realpython.com/flask-google-login/

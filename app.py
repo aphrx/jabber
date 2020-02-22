@@ -46,9 +46,21 @@ def index():
         jobs = [[], [], []]
         jobs[0], jobs[1], jobs[2], count = test.search("software developer",
                                                        "Kitchener")
-        return render_template('job_list.html', jobs=jobs, count=count)
+        return render_template('job_list.html',
+                               jobs=jobs,
+                               count=count,
+                               username=current_user.name)
     else:
         return render_template("index.html")
+
+
+@app.route("/profile")
+@login_required
+def profile():
+    return render_template("profile.html",
+                           email=current_user.email,
+                           pic=current_user.profile_pic,
+                           username=current_user.name)
 
 
 def get_google_provider_cfg():
@@ -127,7 +139,7 @@ def callback():
 @app.route("/logout")
 @login_required
 def logout():
-    logout_user()               # built-in from flask-login lib
+    logout_user()  # built-in from flask-login lib
     return redirect(url_for("index"))
 
 
@@ -139,8 +151,7 @@ def load_user(user_id):
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    return "You must be logged in to access this content.", 403
-
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(ssl_context="adhoc")

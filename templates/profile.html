@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Hello {{username}}</title>
+{% endblock %}
+
+{% block body %}
+
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <div class="card" style="width: 15rem;">
+                <img class="card-img-top" src="{{pic}}" alt="Card image cap">
+                <div class="card-body">
+                    <p class="card-text font-weight-bold">{{username}} </p>
+                    <small class="card-text">{{email}}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm">
+            <a class="btn btn-primary" href="/logout" role="button">Logout</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

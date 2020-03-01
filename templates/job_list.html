@@ -5,7 +5,15 @@
 {% endblock %}
 
 {% block body %}
-
+<br>
+<div>
+<form class="form-inline justify-content-center" align="center" action="{{ url_for('search') }}" method="post">
+	<span><input type="text" placeholder="Keywords"class="form-control" name="keywrd">
+	<input type="text" placeholder="Location" class="form-control" name="location">
+	<input type="submit" value="Search" class="btn" name="submit"></span>
+</form>
+</div>
+<br>
 {% for x in range(count) %}
 
 <br>

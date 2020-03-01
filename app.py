@@ -5,6 +5,7 @@ except ImportError:
 import os
 import json
 import requests
+import linkedin_apply
 import scraper
 from user import User
 from flask_pymongo import PyMongo
@@ -44,14 +45,20 @@ def index():
         #             current_user.profile_pic))
         test = scraper.scrape()
         jobs = [[], [], []]
-        jobs[0], jobs[1], jobs[2], count = test.search("software developer",
-                                                       "Kitchener")
+        jobs[0], jobs[1], jobs[2], count = test.search("Developer",
+                                                       "Toronto", False)
         return render_template('job_list.html',
                                jobs=jobs,
                                count=count,
                                username=current_user.name)
     else:
         return render_template("index.html")
+
+@app.route("/easy-apply")
+def easy_apply():
+    return render_template('easy-apply.html',
+                           username=current_user.name)
+
 
 
 @app.route("/profile")
@@ -142,6 +149,46 @@ def logout():
     logout_user()  # built-in from flask-login lib
     return redirect(url_for("index"))
 
+@app.route('/search', methods=['POST'])
+def search():
+    keywrd = request.form['keywrd']
+    location = request.form['location']
+    print(keywrd + " " + location)
+    test = scraper.scrape()
+    jobs = [[], [], []]
+    jobs[0], jobs[1], jobs[2], count = test.search(keywrd,
+                                                   location, False)
+    return render_template('job_list.html',
+                           jobs=jobs,
+                           count=count,
+                           username=current_user.name)
+
+@app.route('/search-easy', methods=['POST'])
+def search_easy():
+    counter = 0
+    keywrd = request.form['keywrd']
+    location = request.form['location']
+    username = request.form['username']
+    password = request.form['password']
+    test = scraper.scrape()
+    jobs = [[], [], []]
+    jobs[0], jobs[1], jobs[2], count = test.search(keywrd,
+                                                   location, True)
+
+    for j in range(0, 3):
+        try:
+            sele = linkedin_apply.apply(username, password, jobs[2][j])
+            counter += 1
+            sele.run()  
+        except:
+            counter -= 1
+            pass
+            
+    print(counter)
+    return render_template('easy-apply.html',
+                           count=count,
+                           username=current_user.name)
+    #return redirect(url_for("index"))
 
 # flask-login helper to retrieve a user from our db
 @login_manager.user_loader

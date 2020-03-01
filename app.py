@@ -32,42 +32,46 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 # OAuth 2 client setup
 client = WebApplicationClient(secret.GOOGLE_CLIENT_ID)
+account = "Login"
+
 
 
 @app.route("/")
 def index():
-    if current_user.is_authenticated:
-        # return ("<p>Hello, {}! You're logged in! Email: {}</p>"
-        #         "<div><p>Google Profile Picture:</p>"
-        #         '<img src="{}" alt="Google profile pic"></img></div>'
-        #         '<a class="button" href="/logout">Logout</a>'.format(
-        #             current_user.name, current_user.email,
-        #             current_user.profile_pic))
-        test = scraper.scrape()
-        jobs = [[], [], []]
-        jobs[0], jobs[1], jobs[2], count = test.search("Developer",
-                                                       "Toronto", False)
-        return render_template('job_list.html',
-                               jobs=jobs,
-                               count=count,
-                               username=current_user.name)
-    else:
         return render_template("index.html")
+
+@app.route("/postings")
+def postings():
+    global account
+    if current_user.is_authenticated:
+        account = "Settings"
+    test = scraper.scrape()
+    jobs = [[], [], []]
+    jobs[0], jobs[1], jobs[2], count = test.search("Developer",
+                                                   "Toronto", False)
+    return render_template('job_list.html',
+                           jobs=jobs,
+                           count=count, 
+                           account=account)
 
 @app.route("/easy-apply")
 def easy_apply():
-    return render_template('easy-apply.html',
-                           username=current_user.name)
+    global account
+    if current_user.is_authenticated:
+        account = "Settings"
+    return render_template('easy-apply.html', account=account)
 
 
 
 @app.route("/profile")
-@login_required
 def profile():
-    return render_template("profile.html",
-                           email=current_user.email,
-                           pic=current_user.profile_pic,
-                           username=current_user.name)
+    if current_user.is_authenticated:
+        return render_template("profile.html",
+                               email=current_user.email,
+                               pic=current_user.profile_pic, 
+                               account="Settings")
+    else:
+        return render_template("login.html")
 
 
 def get_google_provider_cfg():
@@ -76,17 +80,23 @@ def get_google_provider_cfg():
 
 @app.route("/login")
 def login():
-    # Find out what URL to hit for Google login
-    google_provider_cfg = get_google_provider_cfg()
-    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
-    # Use library to construct the request for Google login and provide
-    # scopes that let you retrieve user's profile from Google
-    request_uri = client.prepare_request_uri(
-        authorization_endpoint,
-        redirect_uri=request.base_url + "/callback",
-        scope=["openid", "email", "profile"],
-    )
-    return redirect(request_uri)
+    if current_user.is_authenticated:
+        return render_template("profile.html",
+                               email=current_user.email,
+                               pic=current_user.profile_pic, 
+                               account="Settings")
+    else:
+        # Find out what URL to hit for Google login
+        google_provider_cfg = get_google_provider_cfg()
+        authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+        # Use library to construct the request for Google login and provide
+        # scopes that let you retrieve user's profile from Google
+        request_uri = client.prepare_request_uri(
+            authorization_endpoint,
+            redirect_uri=request.base_url + "/callback",
+            scope=["openid", "email", "profile"],
+        )
+        return redirect(request_uri)
 
 
 @app.route("/login/callback")  # Google calls this function after authorization
@@ -140,7 +150,10 @@ def callback():
     # Begin user session by logging the user in
     login_user(user)
     # Send user back to homepage
-    return redirect(url_for("index"))
+    return render_template("profile.html",
+                               email=current_user.email,
+                               pic=current_user.profile_pic, 
+                               account="Settings")
 
 
 @app.route("/logout")
@@ -151,6 +164,9 @@ def logout():
 
 @app.route('/search', methods=['POST'])
 def search():
+    global account
+    if current_user.is_authenticated:
+        account = "Settings"
     keywrd = request.form['keywrd']
     location = request.form['location']
     print(keywrd + " " + location)
@@ -160,11 +176,13 @@ def search():
                                                    location, False)
     return render_template('job_list.html',
                            jobs=jobs,
-                           count=count,
-                           username=current_user.name)
+                           count=count, account=account)
 
 @app.route('/search-easy', methods=['POST'])
 def search_easy():
+    global account
+    if current_user.is_authenticated:
+        account = "Settings"
     counter = 0
     keywrd = request.form['keywrd']
     location = request.form['location']
@@ -186,8 +204,7 @@ def search_easy():
             
     print(counter)
     return render_template('easy-apply.html',
-                           count=count,
-                           username=current_user.name)
+                           count=count, account=account)
     #return redirect(url_for("index"))
 
 # flask-login helper to retrieve a user from our db

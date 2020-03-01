@@ -8,28 +8,24 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <a class="navbar-brand" href="/">Jabber</a>
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='img/logo-black.png')}}" alt="Logo" style="width:80px;">
+            </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/job_list">Postings</a>
+                        <a class="nav-link" href="/postings">Postings</a>
                     </li>
                     <li>
-                        <a class="nav-link active" href="/easy-apply">Easy Apply</a>
+                        <a class="nav-link" href="/easy-apply">Easy Apply</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			    {{username}}
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <a class="dropdown-item" href="/profile">Profile</a>
-                            <a class="dropdown-item" href="/logout">Logout</a>
-                        </div>
+                    <li>
+                        <a class="nav-link" href="/login">{{account}}</a>
                     </li>
                 </ul>
             </div>

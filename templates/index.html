@@ -8,9 +8,42 @@
 </head>
 
 <body>
-    <div style="position: fixed;left: 45%;top:50%;">
-      <a class="btn btn-primary" href="/login" role="button">Login with Google</a>
-    </div>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/postings">Postings</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="/easy-apply">Easy Apply</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="/login">Account</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div style="position: fixed;top:30%; width: 100%;" align="center">
+	  	<img width="220px" src="{{ url_for('static', filename='img/logo-black.png')}}">
+	    <br>
+	    <br>
+	    <div>
+			<form class="form-inline justify-content-center" align="center" action="{{ url_for('search') }}" method="post">
+				<span><input type="text" placeholder="Keywords"class="form-control" name="keywrd">
+				<input type="text" placeholder="Location" class="form-control" name="location"><br><br>
+				<input type="submit" value="Search" class="btn" name="submit"></span>
+			</form>
+		</div>
+	</div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.2/umd/popper.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
 </body>
 
 </html>

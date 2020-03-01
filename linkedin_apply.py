@@ -37,6 +37,9 @@ class apply:
 		apply_button = driver.find_element_by_class_name("artdeco-button--primary")
 		apply_button.click()
 
+		apply_button = driver.find_element_by_class_name("continue-btn")
+		apply_button.click()
+
 		driver.close()
 
 

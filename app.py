@@ -1,7 +1,8 @@
 try:
     import secret
 except ImportError:
-    print('Create secret.py with GOOGLE credentials')
+    print('Create secret.py with GOOGLE credentials..exiting')
+    exit(1)
 import os
 import json
 import requests

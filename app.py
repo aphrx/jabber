@@ -35,10 +35,10 @@ client = WebApplicationClient(secret.GOOGLE_CLIENT_ID)
 account = "Login"
 
 
-
 @app.route("/")
 def index():
-        return render_template("index.html")
+    return render_template("index.html")
+
 
 @app.route("/postings")
 def postings():
@@ -47,12 +47,13 @@ def postings():
         account = "Settings"
     test = scraper.scrape()
     jobs = [[], [], []]
-    jobs[0], jobs[1], jobs[2], count = test.search("Developer",
-                                                   "Toronto", False)
+    jobs[0], jobs[1], jobs[2], count = test.search("Developer", "Toronto",
+                                                   False)
     return render_template('job_list.html',
                            jobs=jobs,
-                           count=count, 
+                           count=count,
                            account=account)
+
 
 @app.route("/easy-apply")
 def easy_apply():
@@ -62,13 +63,12 @@ def easy_apply():
     return render_template('easy-apply.html', account=account)
 
 
-
 @app.route("/profile")
 def profile():
     if current_user.is_authenticated:
         return render_template("profile.html",
                                email=current_user.email,
-                               pic=current_user.profile_pic, 
+                               pic=current_user.profile_pic,
                                account="Settings")
     else:
         return render_template("login.html")
@@ -83,7 +83,7 @@ def login():
     if current_user.is_authenticated:
         return render_template("profile.html",
                                email=current_user.email,
-                               pic=current_user.profile_pic, 
+                               pic=current_user.profile_pic,
                                account="Settings")
     else:
         # Find out what URL to hit for Google login
@@ -151,9 +151,9 @@ def callback():
     login_user(user)
     # Send user back to homepage
     return render_template("profile.html",
-                               email=current_user.email,
-                               pic=current_user.profile_pic, 
-                               account="Settings")
+                           email=current_user.email,
+                           pic=current_user.profile_pic,
+                           account="Settings")
 
 
 @app.route("/logout")
@@ -161,6 +161,7 @@ def callback():
 def logout():
     logout_user()  # built-in from flask-login lib
     return redirect(url_for("index"))
+
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -172,11 +173,12 @@ def search():
     print(keywrd + " " + location)
     test = scraper.scrape()
     jobs = [[], [], []]
-    jobs[0], jobs[1], jobs[2], count = test.search(keywrd,
-                                                   location, False)
+    jobs[0], jobs[1], jobs[2], count = test.search(keywrd, location, False)
     return render_template('job_list.html',
                            jobs=jobs,
-                           count=count, account=account)
+                           count=count,
+                           account=account)
+
 
 @app.route('/search-easy', methods=['POST'])
 def search_easy():
@@ -190,22 +192,21 @@ def search_easy():
     password = request.form['password']
     test = scraper.scrape()
     jobs = [[], [], []]
-    jobs[0], jobs[1], jobs[2], count = test.search(keywrd,
-                                                   location, True)
+    jobs[0], jobs[1], jobs[2], count = test.search(keywrd, location, True)
 
     for j in range(0, 3):
         try:
             sele = linkedin_apply.apply(username, password, jobs[2][j])
             counter += 1
-            sele.run()  
+            sele.run()
         except:
             counter -= 1
             pass
-            
+
     print(counter)
-    return render_template('easy-apply.html',
-                           count=count, account=account)
+    return render_template('easy-apply.html', count=count, account=account)
     #return redirect(url_for("index"))
+
 
 # flask-login helper to retrieve a user from our db
 @login_manager.user_loader
@@ -216,6 +217,7 @@ def load_user(user_id):
 @login_manager.unauthorized_handler
 def unauthorized():
     return render_template("index.html")
+
 
 if __name__ == "__main__":
     app.run(ssl_context="adhoc")

@@ -29,8 +29,14 @@ gunicorn app:app -p app.pid -b 127.0.0.1:8000 -D
 # To kill gunicorn anytime
 kill -HUP `cat app.pid`
 kill `cat app.pid`
+```
 
-# This file configure nginx to connect to the gunicorn server that is running in the port below
+Make a file to configure nginx
+``` shell
+sudo su
+vi /etc/nginx/sites-available/jabber
+
+# This file configure nginx to connect to the gunicorn server that is running in the port below, add the **correct** IP in line 3.
 server {
     listen 80;
     server_name 3.87.48.159;
@@ -40,24 +46,33 @@ server {
         proxy_pass http://127.0.0.1:8000;
     }
 }
-# This file configure nginx to connect to the gunicorn server that is running in the port below
+```
 
-# make file and then make a symlink enable the available site
-sudo su
-vi /etc/nginx/sites-available/assignment1
-ln -s /etc/nginx/sites-available/assignment1 /etc/nginx/sites-enabled/assignment1
+Symlink the file to enabled directory, you should be root
+``` shell
+ln -s /etc/nginx/sites-available/jabber /etc/nginx/sites-enabled/jabber
+```
 
-# With the file in that directory, we can test for syntax errors by typing:
+With the file in that directory, we can test for syntax errors and start
+``` shell
 sudo nginx -t
 
+# Now restart nginx
 sudo systemctl restart nginx
 sudo systemctl stop nginx
 
 # Check logs
 sudo tail -30 /var/log/nginx/error.log
+
+# Connecttion refused errors might mean you forgot to start gunicorn
+```
+
+Use ngrok for testing like this
+``` shell
+~/ngrok http 80
 ```
 
 # References
-
 - https://realpython.com/flask-google-login/
 - https://selenium-python.readthedocs.io/
+- https://console.developers.google.com/apis/credentials

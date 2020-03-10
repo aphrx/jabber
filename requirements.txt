@@ -7,3 +7,4 @@ pandas
 oauthlib
 pyOpenSSL
 Flask-Login
+selenium

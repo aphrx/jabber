@@ -9,7 +9,7 @@
 <br>
 <div class="container">
     <div class="row">
-        <div class="col-sm">
+        <div class="col-sm-4">
             <div class="card" style="width: 15rem;">
                 <img class="card-img-top" src="{{pic}}" alt="Card image cap">
                 <div class="card-body">
@@ -18,10 +18,30 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm">
-            <a class="btn btn-primary" href="/logout" role="button">Logout</a>
-        </div>
-    </div>
+
+        <form class="col-sm-6" method="POST">
+            <div class="form-group">
+                <label for="email">Email Linked In email and password for easy apply</label>
+                <input type="email" class="form-control" placeholder="Enter email" id="email" name="email">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Enter password" id="pwd" name="pwd">
+            </div>
+            <button type="submit" value="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div><!-- End of row -->
+
+    <a class="btn btn-danger float-right" href="/logout" role="button">Logout</a>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
 </div>
 
 {% endblock %}

@@ -64,15 +64,25 @@ def easy_apply():
     return render_template('easy-apply.html', account=account)
 
 
-@app.route("/profile")
+@app.route("/profile", methods=['GET', 'POST'])
+@login_required
 def profile():
-    if current_user.is_authenticated:
+    if request.method == 'POST' and 'pwd' in request.form:
+        email = request.form['email']
+        pwd = request.form['pwd']
+        linkedin_info = {"email": email, "pwd": pwd}
+        print("USER ID is ",  current_user.id)
+        mongo.db.posts.update_one({"id": current_user.id},
+                                  {"$push": {
+                                      "linkedIn": linkedin_info
+                                  }})
+        return redirect(url_for("profile"))
+    else:  #  GET
         return render_template("profile.html",
+                               username=current_user.name,
                                email=current_user.email,
                                pic=current_user.profile_pic,
                                account="Settings")
-    else:
-        return render_template("login.html")
 
 
 def get_google_provider_cfg():
@@ -82,10 +92,7 @@ def get_google_provider_cfg():
 @app.route("/login")
 def login():
     if current_user.is_authenticated:
-        return render_template("profile.html",
-                               email=current_user.email,
-                               pic=current_user.profile_pic,
-                               account="Settings")
+        return redirect(url_for("profile"))
     else:
         # Find out what URL to hit for Google login
         google_provider_cfg = get_google_provider_cfg()
@@ -151,10 +158,7 @@ def callback():
     # Begin user session by logging the user in
     login_user(user)
     # Send user back to homepage
-    return render_template("profile.html",
-                           email=current_user.email,
-                           pic=current_user.profile_pic,
-                           account="Settings")
+    return redirect(url_for("index"))
 
 
 @app.route("/logout")

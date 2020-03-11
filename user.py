@@ -25,5 +25,9 @@ class User(UserMixin):
             "name": name,
             "email": email,
             "profile_pic": profile_pic,
+            "linkedIn": {
+                "email": "",
+                "pwd": ""
+            }
         }
         mongo.db.users.insert(user)

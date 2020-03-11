@@ -72,6 +72,22 @@ Use ngrok for testing like this
 ~/ngrok http 80
 ```
 
+# Database Structure
+
+``` python
+user = {
+	"id" : user_id from google,
+	"name" : Users first name
+	"email" : email authenticating google
+	"profile_pic" : google profile pic
+	"linkedIn" : {
+		"email": linkedIn email
+		"pwd": linkedIn password
+	}
+}
+```
+
+
 # References
 - https://realpython.com/flask-google-login/
 - https://selenium-python.readthedocs.io/

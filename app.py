@@ -210,7 +210,6 @@ def search_easy():
 
     print(counter)
     return render_template('easy-apply.html', count=count, account=account)
-    #return redirect(url_for("index"))
 
 
 # flask-login helper to retrieve a user from our db
@@ -221,7 +220,7 @@ def load_user(user_id):
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    return render_template("index.html")
+    return render_template("index.html", login_err="yep")
 
 
 if __name__ == "__main__":

@@ -10,7 +10,6 @@ import linkedin_apply
 import scraper
 from user import User
 from flask_pymongo import PyMongo
-from bson.objectid import ObjectId
 from oauthlib.oauth2 import WebApplicationClient
 from flask import Flask, redirect, request, url_for, render_template
 from flask_login import (
@@ -71,13 +70,13 @@ def profile():
         email = request.form['email']
         pwd = request.form['pwd']
         linkedin_info = {"email": email, "pwd": pwd}
-        print("USER ID is ",  current_user.id)
+        print("USER ID is ", current_user.id)
         mongo.db.posts.update_one({"id": current_user.id},
                                   {"$push": {
                                       "linkedIn": linkedin_info
                                   }})
         return redirect(url_for("profile"))
-    else:  #  GET
+    else:  # GET
         return render_template("profile.html",
                                username=current_user.name,
                                email=current_user.email,

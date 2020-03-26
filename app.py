@@ -70,17 +70,22 @@ def profile():
         email = request.form['email']
         pwd = request.form['pwd']
         linkedin_info = {"email": email, "pwd": pwd}
-        print("USER ID is ", current_user.id)
-        mongo.db.posts.update_one({"id": current_user.id},
-                                  {"$push": {
+        mongo.db.users.update_one({"id": current_user.id},
+                                  {"$set": {
                                       "linkedIn": linkedin_info
                                   }})
         return redirect(url_for("profile"))
     else:  # GET
+        linkedIn_ok = "false"
+        if current_user.is_authenticated:
+            user = mongo.db.users.find_one({"id": current_user.id})
+            if user["linkedIn"]["pwd"] != "":
+                linkedIn_ok = "true"
         return render_template("profile.html",
                                username=current_user.name,
                                email=current_user.email,
                                pic=current_user.profile_pic,
+                               linkedIn_ok=linkedIn_ok,
                                account="Settings")
 
 

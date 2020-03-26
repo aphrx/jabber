@@ -16,24 +16,34 @@ class scrape:
 
 	def search(self, search, location, easy):
 		search_r = search.replace(" ", "-")
-		if easy is True:
-			self.URL = "https://www.linkedin.com/jobs/search/?keywords=" + search_r + "&location=" + location + "&f_LF=f_AL"
-		else:
-			self.URL = "https://www.linkedin.com/jobs/search/?keywords=" + search_r + "&location=" + location
-		print(self.URL)
-		page =  requests.get(self.URL)
-		self.soup = BeautifulSoup(page.text, "html.parser")
+		#if easy is True:
+		#	self.URL = "https://www.linkedin.com/jobs/search/?keywords=" + search_r + "&location=" + location + "&f_LF=f_AL"
+		#else:
+		#	self.URL = "https://www.linkedin.com/jobs/search/?keywords=" + search_r + "&location=" + location
+		#print(self.URL)
+		#page =  requests.get(self.URL)
+		#self.soup = BeautifulSoup(page.text, "html.parser")
 
-		self.job_title()
+		#self.job_title()
+
+		#if easy is False:
+		#	search_r = search.replace(" ", "-")
+		#	self.URL = "https://ca.indeed.com/" + search_r + "-jobs-in-" + location
+		#	print(self.URL)
+		#	page =  requests.get(self.URL)
+		#	self.soup = BeautifulSoup(page.text, "html.parser")
+
+		#	self.job_title_indeed()
+
+		search_r = search.replace(" ", "+")
 
 		if easy is False:
-			search_r = search.replace(" ", "-")
-			self.URL = "https://ca.indeed.com/" + search_r + "-jobs-in-" + location
+
+			self.URL = "https://www.jobbank.gc.ca/jobsearch/jobsearch?searchstring="+search_r+"+in+" + location
 			print(self.URL)
 			page =  requests.get(self.URL)
 			self.soup = BeautifulSoup(page.text, "html.parser")
-
-			self.job_title_indeed()
+			self.job_title_can()
 
 		return self.jobs, self.employer, self.links, len(self.jobs)
 
@@ -63,3 +73,12 @@ class scrape:
 				for span in sec_try:
 					self.employer.append(span.text.strip())
 			self.links.append("https://ca.indeed.com/rc/clk?jk=" + str(div["data-jk"]))
+
+	def job_title_can(self):
+		for div in self.soup.find_all(name="article"):
+			for job in div.find_all(name="a", attrs={"class":"resultJobItem"}):
+				j = job['href']
+				self.jobs.append(j)
+				self.employer.append(j)
+				self.links.append(j)
+				

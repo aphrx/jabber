@@ -104,6 +104,7 @@ user = {
 		"email": linkedIn email
 		"pwd": linkedIn password
 	}
+	"cv": cv template text data
 }
 ```
 

@@ -75,17 +75,31 @@ def profile():
                                       "linkedIn": linkedin_info
                                   }})
         return redirect(url_for("profile"))
+    elif request.method == 'POST' and 'cv' in request.form:
+        cv_data = request.form['cv']
+        mongo.db.users.update_one({"id": current_user.id},
+                                  {"$set": {
+                                      "cv": cv_data
+                                  }})
+        return redirect(url_for("profile"))
     else:  # GET
         linkedIn_ok = "false"
+        cv_ok = "false"
+        cv_data = ""
         if current_user.is_authenticated:
             user = mongo.db.users.find_one({"id": current_user.id})
             if user["linkedIn"]["pwd"] != "":
                 linkedIn_ok = "true"
+            if user["cv"] != "":
+                cv_ok = "true"
+                cv_data = user["cv"]
         return render_template("profile.html",
                                username=current_user.name,
                                email=current_user.email,
                                pic=current_user.profile_pic,
                                linkedIn_ok=linkedIn_ok,
+                               cv_ok=cv_ok,
+                               cv_data=cv_data,
                                account="Settings")
 
 

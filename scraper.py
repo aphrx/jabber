@@ -26,18 +26,18 @@ class scrape:
 
 		#self.job_title()
 
-		#if easy is False:
-		#	search_r = search.replace(" ", "-")
-		#	self.URL = "https://ca.indeed.com/" + search_r + "-jobs-in-" + location
-		#	print(self.URL)
-		#	page =  requests.get(self.URL)
-		#	self.soup = BeautifulSoup(page.text, "html.parser")
+		if easy is False:
+			search_r = search.replace(" ", "-")
+			self.URL = "https://ca.indeed.com/" + search_r + "-jobs-in-" + location
+			print(self.URL)
+			page =  requests.get(self.URL)
+			self.soup = BeautifulSoup(page.text, "html.parser")
 
-		#	self.job_title_indeed()
+			self.job_title_indeed()
 
 		search_r = search.replace(" ", "+")
 
-		if easy is False:
+		if easy is True:
 
 			self.URL = "https://www.jobbank.gc.ca/jobsearch/jobsearch?searchstring="+search_r+"+in+" + location
 			print(self.URL)

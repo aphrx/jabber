@@ -6,12 +6,14 @@ except ImportError:
 import os
 import json
 import requests
+import sys
 import linkedin_apply
 import scraper
+import cvgen
 from user import User
 from flask_pymongo import PyMongo
 from oauthlib.oauth2 import WebApplicationClient
-from flask import Flask, redirect, request, url_for, render_template
+from flask import Flask, send_from_directory, redirect, request, url_for, render_template
 from flask_login import (
     LoginManager,
     current_user,
@@ -201,6 +203,24 @@ def search():
                            jobs=jobs,
                            count=count,
                            account=account)
+
+@app.route('/gen-cv/<string:job>/<string:employer>')
+def gen_cv(job, employer):
+    if current_user.is_authenticated:
+        user = mongo.db.users.find_one({"id": current_user.id})
+        if user["cv"] != "":
+            cv_data = user["cv"]
+        cv_data = cv_data.encode('latin-1', 'replace').decode('latin-1')
+        print(cv_data)
+        print(job)
+        cv = cvgen.cvgen(cv_data, job, employer, "Toronto, ON", "file.pdf")
+        cv.generate()
+        return send_from_directory(directory="",
+                               filename='file.pdf',
+                               mimetype='application/pdf')
+    return send_from_directory(directory="",
+                               filename='file.pdf',
+                               mimetype='application/pdf')
 
 
 @app.route('/search-easy', methods=['POST'])

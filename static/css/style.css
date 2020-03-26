@@ -13,10 +13,10 @@
   }
 #left{
     float: left;
-    width:90%;
+    width:85%;
 }
 
 #right{
     float: right;
-    width:10%;
+    width:15%;
 }

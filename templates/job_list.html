@@ -24,7 +24,9 @@
             <p>{{jobs[1][x]}}</p>
         </div>
         <div id="right">
-            <button type="button" class="btn btn-dark" onclick="location.href='{{jobs[2][x]}}'">Apply</button>
+            
+            <button style="float: right;" type="button" class="btn btn-dark" onclick="location.href='{{jobs[2][x]}}'">Apply</button>
+            <a href="{{ url_for('gen_cv', job=jobs[0][x], employer=jobs[1][x]) }}" style="float: right;" >Generate CV</a>
         </div>
     </div>
 </div>

@@ -105,15 +105,19 @@ user = {
 		"pwd": linkedIn password
 	}
 	"cv": cv template text data
+	"resume": resume template text data
 }
 ```
 
 Deleting documents in the database
 ``` shell
 mongo --port 27017 # Start mongo
-use jabberDatabase # Switch db
-db.users.find()    # list all
-db.users.deleteMany({}) # delete all users
+# Switch db
+use jabberDatabase
+# list all
+db.users.find()
+# delete all users
+db.users.deleteMany({})
 ```
 
 # References

@@ -90,10 +90,19 @@ def profile():
                                       "cv": cv_data
                                   }})
         return redirect(url_for("profile"))
+    elif request.method == 'POST' and 'resume' in request.form:
+        resume_data = request.form['resume']
+        mongo.db.users.update_one({"id": current_user.id},
+                                  {"$set": {
+                                      "resume": resume_data
+                                  }})
+        return redirect(url_for("profile"))
     else:  # GET
         linkedIn_ok = "false"
         cv_ok = "false"
         cv_data = ""
+        resume_ok = "false"
+        resume_data = ""
         if current_user.is_authenticated:
             user = mongo.db.users.find_one({"id": current_user.id})
             if user["linkedIn"]["pwd"] != "":
@@ -101,6 +110,9 @@ def profile():
             if user["cv"] != "":
                 cv_ok = "true"
                 cv_data = user["cv"]
+            if user["resume"] != "":
+                resume_ok = "true"
+                resume_data = user["resume"]
         return render_template("profile.html",
                                username=current_user.name,
                                email=current_user.email,
@@ -108,6 +120,8 @@ def profile():
                                linkedIn_ok=linkedIn_ok,
                                cv_ok=cv_ok,
                                cv_data=cv_data,
+                               resume_ok=resume_ok,
+                               resume_data=resume_data,
                                account="Settings")
 
 

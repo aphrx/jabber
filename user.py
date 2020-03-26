@@ -30,5 +30,6 @@ class User(UserMixin):
                 "pwd": ""
             },
             "cv": "",
+            "resume": "",
         }
         mongo.db.users.insert(user)

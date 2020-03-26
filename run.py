@@ -9,7 +9,7 @@ employer = []
 links = []
 selenium = []
 
-jobs, employer, links, count = test.search("software developer", "toronto", False)
+jobs, employer, links, count = test.search("software developer", "toronto", True)
 
 
 #for i in range(0, len(jobs)):
@@ -19,7 +19,8 @@ jobs, employer, links, count = test.search("software developer", "toronto", Fals
 	#print(" ")
 
 j = jobbankapply.apply(jobs)
-j.run()
+emails = ['amalnnath20@gmail.com']#j.run()
+j.email(emails)
 
 #for j in range(0, len(links)):
 #	jobs[j] = linkedin_apply.apply("amalnnath20@gmail.com", "Pikachu20s", links[j])

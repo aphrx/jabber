@@ -8,3 +8,5 @@ oauthlib
 pyOpenSSL
 Flask-Login
 selenium
+fpdf
+sendgrid

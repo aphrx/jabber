@@ -108,6 +108,14 @@ user = {
 }
 ```
 
+Deleting documents in the database
+``` shell
+mongo --port 27017 # Start mongo
+use jabberDatabase # Switch db
+db.users.find()    # list all
+db.users.deleteMany({}) # delete all users
+```
+
 # References
 - https://realpython.com/flask-google-login/
 - https://selenium-python.readthedocs.io/

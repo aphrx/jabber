@@ -55,6 +55,8 @@ class apply:
 			except:
 				pass
 
+			driver.quit()
+
 		return emails, titles, occ
 
 	def email(self, emails, jobs, employer, cv_data, resume, user):

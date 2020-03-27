@@ -8,8 +8,6 @@ class cvgen:
 		self.location = loc
 		self.title = title
 
-
-
 	def generate(self):
 
 		modBody = self.body

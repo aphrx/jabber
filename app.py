@@ -6,8 +6,10 @@ except ImportError:
 import os
 import json
 import requests
+import sys
 import linkedin_apply
 import scraper
+import jobbankapply
 import cvgen
 from user import User
 from flask_pymongo import PyMongo
@@ -224,7 +226,6 @@ def search():
                            count=count,
                            account=account)
 
-
 @app.route('/gen-cv/<string:job>/<string:employer>')
 def gen_cv(job, employer):
     if current_user.is_authenticated:
@@ -232,44 +233,46 @@ def gen_cv(job, employer):
         if user["cv"] != "":
             cv_data = user["cv"]
         cv_data = cv_data.encode('latin-1', 'replace').decode('latin-1')
-        print(cv_data)
-        print(job)
-        cv = cvgen.cvgen(cv_data, job, employer, "Toronto, ON", "file.pdf")
+        cv = cvgen.cvgen(cv_data, job, employer, "Toronto, ON", 'data/' + user['id'] +'CV.pdf')
         cv.generate()
-        return send_from_directory(directory="",
-                                   filename='file.pdf',
-                                   mimetype='application/pdf')
-    else:
-        return send_from_directory(directory="",
-                                   filename='file.pdf',
-                                   mimetype='application/pdf')
+        return send_from_directory(directory="data",
+                               filename= user['id'] +'CV.pdf',
+                               mimetype='application/pdf')
+    return redirect(url_for("login"))
 
 
 @app.route('/search-easy', methods=['POST'])
 def search_easy():
+    output = "Applied to X jobs"
     global account
     if current_user.is_authenticated:
         account = "Settings"
-    counter = 0
+
+        user = mongo.db.users.find_one({"id": current_user.id})
+        if user["cv"] != "":
+            cv_data = user["cv"]
+        cv_data = cv_data.encode('latin-1', 'replace').decode('latin-1')
+
+        user = mongo.db.users.find_one({"id": current_user.id})
+        if user["resume"] != "":
+            resume = user["resume"]
+        resume = resume.encode('latin-1', 'replace').decode('latin-1')
+
     keywrd = request.form['keywrd']
     location = request.form['location']
-    username = request.form['username']
-    password = request.form['password']
+
     test = scraper.scrape()
     jobs = [[], [], []]
     jobs[0], jobs[1], jobs[2], count = test.search(keywrd, location, True)
 
-    for j in range(0, 3):
-        try:
-            sele = linkedin_apply.apply(username, password, jobs[2][j])
-            counter += 1
-            sele.run()
-        except:
-            counter -= 1
-            pass
+    j = jobbankapply.apply(jobs[2])
+    emails, jobs, employer = j.run()
+    print(emails)
+    print(jobs)
+    print(employer)
 
-    print(counter)
-    return render_template('easy-apply.html', count=count, account=account)
+    j.email(emails, jobs, employer, cv_data, resume, current_user.id)
+    return render_template('easy-apply.html', count=count, account=account, output=output)
 
 
 # flask-login helper to retrieve a user from our db

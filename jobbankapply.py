@@ -10,15 +10,18 @@ from sendgrid.helpers.mail import (
 from sendgrid import SendGridAPIClient
 import time
 import secret
+import cvgen
 
 emails = []
+titles = []
+occ = []
 
 class apply:
 	def __init__(self, jobs):
 		self.jobs = jobs
 
 	def run(self):
-		global emails
+		global emails, titles, occ
 		for i in self.jobs:
 			options = webdriver.ChromeOptions()
 			options.add_argument('--ignore-certificate-errors-spki-list')
@@ -35,37 +38,64 @@ class apply:
 
 				time.sleep(1)
 
+				title = driver.find_element_by_xpath("//span[@property='title']")
+				employer = driver.find_element_by_xpath("//a[@class='external']")
+
 				elems = driver.find_elements_by_xpath("//a[@href]")
 				e = []
 			
 				for elem in elems:
-				    val = elem.get_attribute("href")
+					val = elem.get_attribute("href")
 
-				    if "@" in val:
-				        emails.append(val.replace("mailto:", ""))
-				        break
+					if "@" in val:
+						titles.append(title.get_attribute('innerHTML').strip())
+						occ.append(employer.get_attribute('innerHTML'))
+						emails.append(val.replace("mailto:", ""))
+						break
 			except:
 				pass
 
-		return emails
+		return emails, titles, occ
 
-	def email(self, emails):
-		for e in emails:
+	def email(self, emails, jobs, employer, cv_data, resume, user):
+		for i in range(len(emails)):
+			
 			message = Mail(
 			    from_email='hire@jabber.store',
-			    to_emails=e,
+			    to_emails=secret.SENDER,
 			    subject='Resume',
 			    html_content='To whoever this may concern')
 
-			file_path = 'file.pdf'
-			with open(file_path, 'rb') as f:
+			cv = cvgen.cvgen(cv_data, jobs[i], employer[i], "Toronto, ON", 'data/' + user +'CVE.pdf')
+			cv.generate()
+
+			cv = cvgen.cvgen(resume, jobs[i], employer[i], "Toronto, ON", 'data/' + user +'RE.pdf')
+			cv.generate()
+
+			file_path = user + 'CVE.pdf'
+			
+			with open('data/' + file_path, 'rb') as f:
 			    data = f.read()
 			    f.close()
 			encoded = base64.b64encode(data).decode()
 			attachment = Attachment()
 			attachment.file_content = FileContent(encoded)
 			attachment.file_type = FileType('application/pdf')
-			attachment.file_name = FileName('file.pdf')
+			attachment.file_name = FileName(user + 'CVE.pdf')
+			attachment.disposition = Disposition('attachment')
+			attachment.content_id = ContentId('Example Content ID')
+			message.attachment = attachment
+
+			file_path = user + 'RE.pdf'
+			
+			with open('data/' + file_path, 'rb') as f:
+			    data = f.read()
+			    f.close()
+			encoded = base64.b64encode(data).decode()
+			attachment = Attachment()
+			attachment.file_content = FileContent(encoded)
+			attachment.file_type = FileType('application/pdf')
+			attachment.file_name = FileName(user + 'RE.pdf')
 			attachment.disposition = Disposition('attachment')
 			attachment.content_id = ContentId('Example Content ID')
 			message.attachment = attachment

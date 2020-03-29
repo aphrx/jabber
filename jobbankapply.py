@@ -66,7 +66,7 @@ class apply:
 			    from_email='hire@jabber.store',
 			    to_emails=secret.SENDER,
 			    subject='Resume',
-			    html_content='To whoever this may concern, \n\nAttached below is a copy of a resume & cover letter for a qualified candidate for your position at ' + employer[i] + ' for the position of ' + jobs[i] +'. We have contacted you through your listed email at ' + emails[i] +'\nThank you for your consideration,\nThe Jabber Team')
+			    html_content='<p>To whoever this may concern,</p><p>Attached below is a copy of a resume & cover letter for a qualified candidate for your position at ' + employer[i] + ' for the position of ' + jobs[i] +'. We have contacted you through your listed email at ' + emails[i] +'</p><p>Thank you for your consideration,</p><p>The Jabber Team</p>')
 
 			cv = cvgen.cvgen(cv_data, jobs[i], employer[i], "Toronto, ON", 'data/' + user +'CVE.pdf')
 			cv.generate()

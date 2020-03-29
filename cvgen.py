@@ -15,7 +15,7 @@ class cvgen:
 		modBody = modBody.replace("XXX", self.occupation)
 		modBody = modBody.replace("YYY", self.employer)
 		modBody = modBody.replace("ZZZ", self.location)
-		modBody = modBody.replace("  ", "\n")
+		#modBody = modBody.replace("  ", "\n")
 
 		pdf = FPDF()
 		pdf.add_page()

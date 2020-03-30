@@ -21,6 +21,7 @@ from flask import (
     request,
     url_for,
     render_template,
+    session
 )
 from flask_login import (
     LoginManager,
@@ -53,7 +54,7 @@ def index():
 @app.route("/postings")
 def postings():
     global account
-    if current_user.is_authenticated:
+    if 'user_id' in session:
         account = "Settings"
     test = scraper.scrape()
     jobs = [[], [], []]
@@ -68,63 +69,65 @@ def postings():
 @app.route("/easy-apply")
 def easy_apply():
     global account
-    if current_user.is_authenticated:
+    if 'user_id' in session:
         account = "Settings"
     return render_template('easy-apply.html', account=account)
 
 
 @app.route("/profile", methods=['GET', 'POST'])
-@login_required
 def profile():
-    if request.method == 'POST' and 'pwd' in request.form:
-        email = request.form['email']
-        pwd = request.form['pwd']
-        linkedin_info = {"email": email, "pwd": pwd}
-        mongo.db.users.update_one({"id": current_user.id},
-                                  {"$set": {
-                                      "linkedIn": linkedin_info
-                                  }})
-        return redirect(url_for("profile"))
-    elif request.method == 'POST' and 'cv' in request.form:
-        cv_data = request.form['cv']
-        mongo.db.users.update_one({"id": current_user.id},
-                                  {"$set": {
-                                      "cv": cv_data
-                                  }})
-        return redirect(url_for("profile"))
-    elif request.method == 'POST' and 'resume' in request.form:
-        resume_data = request.form['resume']
-        mongo.db.users.update_one({"id": current_user.id},
-                                  {"$set": {
-                                      "resume": resume_data
-                                  }})
-        return redirect(url_for("profile"))
-    else:  # GET
-        linkedIn_ok = "false"
-        cv_ok = "false"
-        cv_data = ""
-        resume_ok = "false"
-        resume_data = ""
-        if current_user.is_authenticated:
-            user = mongo.db.users.find_one({"id": current_user.id})
-            if user["linkedIn"]["pwd"] != "":
-                linkedIn_ok = "true"
-            if user["cv"] != "":
-                cv_ok = "true"
-                cv_data = user["cv"]
-            if user["resume"] != "":
-                resume_ok = "true"
-                resume_data = user["resume"]
-        return render_template("profile.html",
-                               username=current_user.name,
-                               email=current_user.email,
-                               pic=current_user.profile_pic,
-                               linkedIn_ok=linkedIn_ok,
-                               cv_ok=cv_ok,
-                               cv_data=cv_data,
-                               resume_ok=resume_ok,
-                               resume_data=resume_data,
-                               account="Settings")
+    if 'user_id' in session:
+        if request.method == 'POST' and 'pwd' in request.form:
+            email = request.form['email']
+            pwd = request.form['pwd']
+            linkedin_info = {"email": email, "pwd": pwd}
+            mongo.db.users.update_one({"id": session['user_id']},
+                                    {"$set": {
+                                        "linkedIn": linkedin_info
+                                    }})
+            return redirect(url_for("profile"))
+        elif request.method == 'POST' and 'cv' in request.form:
+            cv_data = request.form['cv']
+            session['cv_data'] = cv_data
+            mongo.db.users.update_one({"id": session['user_id']},
+                                    {"$set": {
+                                        "cv": cv_data
+                                    }})
+            return redirect(url_for("profile"))
+        elif request.method == 'POST' and 'resume' in request.form:
+            resume_data = request.form['resume']
+            session['resume_data'] = resume_data
+            mongo.db.users.update_one({"id": session['user_id']},
+                                    {"$set": {
+                                        "resume": resume_data
+                                    }})
+            return redirect(url_for("profile"))
+        else:  # GET
+            linkedIn_ok = "false"
+            cv_ok = "false"
+            cv_data = ""
+            resume_ok = "false"
+            resume_data = ""
+            if 'user_id' in session:
+                user = mongo.db.users.find_one({"id": session['user_id']})
+                if user["linkedIn"]["pwd"] != "":
+                    linkedIn_ok = "true"
+                if user["cv"] != "":
+                    cv_ok = "true"
+                    cv_data = user["cv"]
+                if user["resume"] != "":
+                    resume_ok = "true"
+                    resume_data = user["resume"]
+            return render_template("profile.html",
+                                username=current_user.name,
+                                email=current_user.email,
+                                pic=current_user.profile_pic,
+                                linkedIn_ok=linkedIn_ok,
+                                cv_ok=cv_ok,
+                                cv_data=cv_data,
+                                resume_ok=resume_ok,
+                                resume_data=resume_data,
+                                account="Settings")
 
 
 def get_google_provider_cfg():
@@ -133,7 +136,7 @@ def get_google_provider_cfg():
 
 @app.route("/login")
 def login():
-    if current_user.is_authenticated:
+    if 'user_id' in session:
         return redirect(url_for("profile"))
     else:
         # Find out what URL to hit for Google login
@@ -199,6 +202,7 @@ def callback():
         User.create(unique_id, users_name, users_email, picture, mongo)
     # Begin user session by logging the user in
     login_user(user)
+    session['user_id'] = unique_id
     # Send user back to homepage
     return redirect(url_for("index"))
 
@@ -206,6 +210,7 @@ def callback():
 @app.route("/logout")
 @login_required
 def logout():
+    session.pop('user_id', None)
     logout_user()  # built-in from flask-login lib
     return redirect(url_for("index"))
 
@@ -213,7 +218,7 @@ def logout():
 @app.route('/search', methods=['POST'])
 def search():
     global account
-    if current_user.is_authenticated:
+    if 'user_id' in session:
         account = "Settings"
     keywrd = request.form['keywrd']
     location = request.form['location']
@@ -228,8 +233,8 @@ def search():
 
 @app.route('/gen-cv/<string:job>/<string:employer>')
 def gen_cv(job, employer):
-    if current_user.is_authenticated:
-        user = mongo.db.users.find_one({"id": current_user.id})
+    if 'user_id' in session:
+        user = mongo.db.users.find_one({"id": session['user_id']})
         if user["cv"] != "":
             cv_data = user["cv"]
         cv_data = cv_data.encode('latin-1', 'replace').decode('latin-1')
@@ -245,15 +250,13 @@ def gen_cv(job, employer):
 def search_easy():
     output = "Applied to X jobs"
     global account
-    if current_user.is_authenticated:
+    if 'user_id' in session:
+        user = mongo.db.users.find_one({"id": session['user_id']})
         account = "Settings"
-
-        user = mongo.db.users.find_one({"id": current_user.id})
         if user["cv"] != "":
             cv_data = user["cv"]
         cv_data = cv_data.encode('latin-1', 'replace').decode('latin-1')
 
-        user = mongo.db.users.find_one({"id": current_user.id})
         if user["resume"] != "":
             resume = user["resume"]
         resume = resume.encode('latin-1', 'replace').decode('latin-1')
@@ -271,7 +274,7 @@ def search_easy():
     print(jobs)
     print(employer)
 
-    j.email(emails, jobs, employer, cv_data, resume, current_user.id)
+    j.email(emails, jobs, employer, cv_data, resume, session['user_id'])
     return render_template('easy-apply.html', count=count, account=account, output=output)
 
 

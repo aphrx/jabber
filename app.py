@@ -88,7 +88,6 @@ def profile():
             return redirect(url_for("profile"))
         elif request.method == 'POST' and 'cv' in request.form:
             cv_data = request.form['cv']
-            session['cv_data'] = cv_data
             mongo.db.users.update_one({"id": session['user_id']},
                                     {"$set": {
                                         "cv": cv_data
@@ -96,7 +95,6 @@ def profile():
             return redirect(url_for("profile"))
         elif request.method == 'POST' and 'resume' in request.form:
             resume_data = request.form['resume']
-            session['resume_data'] = resume_data
             mongo.db.users.update_one({"id": session['user_id']},
                                     {"$set": {
                                         "resume": resume_data

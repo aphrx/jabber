@@ -48,6 +48,8 @@ account = "Login"
 
 @app.route("/")
 def index():
+    if 'user_id' in session:
+        print(session['user_id'])
     return render_template("index.html")
 
 

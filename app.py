@@ -56,6 +56,7 @@ def index():
 @app.route("/postings")
 def postings():
     global account
+    account = "Login"
     if 'user_id' in session:
         account = "Settings"
     test = scraper.scrape()
@@ -71,9 +72,11 @@ def postings():
 @app.route("/easy-apply")
 def easy_apply():
     global account
+    account = "Login"
     if 'user_id' in session:
         account = "Settings"
-    return render_template('easy-apply.html', account=account)
+        return render_template('easy-apply.html', account=account)
+    return redirect(url_for("login"))
 
 
 @app.route("/profile", methods=['GET', 'POST'])
@@ -218,6 +221,7 @@ def logout():
 @app.route('/search', methods=['POST'])
 def search():
     global account
+    account = "Login"
     if 'user_id' in session:
         account = "Settings"
     keywrd = request.form['keywrd']
@@ -251,6 +255,7 @@ def search_easy():
     
     output = "Applied to X jobs"
     global account
+    account = "Login"
     if 'user_id' in session:
         user = mongo.db.users.find_one({"id": session['user_id']})
         account = "Settings"

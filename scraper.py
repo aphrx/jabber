@@ -37,12 +37,13 @@ class scrape:
 
 		search_r = search.replace(" ", "+")
 
+		if easy is True:
 
-		self.URL = "https://www.jobbank.gc.ca/jobsearch/jobsearch?searchstring="+search_r+"+in+" + location+"&sort=D"
-		print(self.URL)
-		page =  requests.get(self.URL)
-		self.soup = BeautifulSoup(page.text, "html.parser")
-		self.job_title_can()
+			self.URL = "https://www.jobbank.gc.ca/jobsearch/jobsearch?searchstring="+search_r+"+in+" + location+"&sort=D"
+			print(self.URL)
+			page =  requests.get(self.URL)
+			self.soup = BeautifulSoup(page.text, "html.parser")
+			self.job_title_can()
 
 		return self.jobs, self.employer, self.links, len(self.jobs)
 

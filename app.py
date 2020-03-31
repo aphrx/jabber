@@ -33,7 +33,7 @@ from flask_login import (
 
 app = Flask(__name__, template_folder='templates')
 # We can make this secret key as environ variable later to sign cookies
-app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
+app.secret_key = "test" #os.environ.get("SECRET_KEY")# or os.urandom(24)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/jabberDatabase"
 mongo = PyMongo(app)
 

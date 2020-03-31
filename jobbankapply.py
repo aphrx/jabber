@@ -45,6 +45,7 @@ class apply:
 				e = []
 			
 				for elem in elems:
+					print("looping")
 					val = elem.get_attribute("href")
 
 					if "@" in val:

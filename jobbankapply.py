@@ -44,8 +44,9 @@ class apply:
 				elems = driver.find_elements_by_xpath("//a[@href]")
 				e = []
 			
+				print("looping")
 				for elem in elems:
-					print("looping")
+					
 					val = elem.get_attribute("href")
 
 					if "@" in val:
@@ -61,6 +62,7 @@ class apply:
 		return emails, titles, occ
 
 	def email(self, emails, jobs, employer, cv_data, resume, user):
+		print("emailing")
 		for i in range(len(emails)):
 			
 			message = Mail(

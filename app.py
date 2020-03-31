@@ -248,6 +248,7 @@ def gen_cv(job, employer):
 
 @app.route('/search-easy', methods=['POST'])
 def search_easy():
+    
     output = "Applied to X jobs"
     global account
     if 'user_id' in session:
@@ -261,21 +262,22 @@ def search_easy():
             resume = user["resume"]
         resume = resume.encode('latin-1', 'replace').decode('latin-1')
 
-    keywrd = request.form['keywrd']
-    location = request.form['location']
+        keywrd = request.form['keywrd']
+        location = request.form['location']
 
-    test = scraper.scrape()
-    jobs = [[], [], []]
-    jobs[0], jobs[1], jobs[2], count = test.search(keywrd, location, True)
+        test = scraper.scrape()
+        jobs = [[], [], []]
+        jobs[0], jobs[1], jobs[2], count = test.search(keywrd, location, True)
 
-    j = jobbankapply.apply(jobs[2])
-    emails, jobs, employer = j.run()
-    print(emails)
-    print(jobs)
-    print(employer)
+        j = jobbankapply.apply(jobs[2])
+        emails, jobs, employer = j.run()
+        print(emails)
+        print(jobs)
+        print(employer)
 
-    j.email(emails, jobs, employer, cv_data, resume, session['user_id'])
-    return render_template('easy-apply.html', count=count, account=account, output=output)
+        j.email(emails, jobs, employer, cv_data, resume, session['user_id'])
+        return render_template('easy-apply.html', count=count, account=account, output=output)
+    return redirect(url_for("login"))
 
 
 # flask-login helper to retrieve a user from our db

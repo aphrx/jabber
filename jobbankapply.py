@@ -36,7 +36,7 @@ class apply:
 				elems = driver.find_element_by_class_name("btn-success")
 				elems.click()
 
-				time.sleep(1)
+				time.sleep(0.5)
 
 				title = driver.find_element_by_xpath("//span[@property='title']")
 				employer = driver.find_element_by_xpath("//a[@class='external']")

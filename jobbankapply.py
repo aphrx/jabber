@@ -115,5 +115,20 @@ class apply:
 			    print(response.headers)
 			except Exception as e:
 			    print(e.message)
+		
+		message = Mail(
+			from_email='hire@jabber.store',
+			to_emails=secret.SENDER,
+			subject='Resume',
+			html_content='<p>Hello,</p><p>Our automated service has executed and applied you for the following roles:</p> ' + str(employer) + ' <br> ' + str(jobs) +'<p>Thank you for using our service,</p><p>The Jabber Team</p>')
+			
+		try:
+			sendgrid_client = SendGridAPIClient(secret.SENDGRID_KEY)
+			response = sendgrid_client.send(message)
+			print(response.status_code)
+			print(response.body)
+			print(response.headers)
+		except Exception as e:
+			print(e.message)
 
 

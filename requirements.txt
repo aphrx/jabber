@@ -9,4 +9,5 @@ pyOpenSSL
 Flask-Login
 selenium
 fpdf
+flask_apscheduler
 sendgrid

@@ -305,6 +305,7 @@ def load_user(user_id):
 def unauthorized():
     return render_template("index.html", login_err="yep")
 
+@app.route("/cron")
 def scheduled():
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")

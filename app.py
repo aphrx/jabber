@@ -324,7 +324,13 @@ def scheduled():
         print(jobs)
         print(employer)
 
-        j.email(emails, jobs, employer, u['cv'], u['resume'], u['id'])
+        cv_data = u['cv']
+        cv_data = cv_data.encode('latin-1', 'replace').decode('latin-1')
+
+        resume = u['resume']
+        resume = resume.encode('latin-1', 'replace').decode('latin-1')
+
+        j.email(emails, jobs, employer, cv_data, resume, u['id'])
 
 scheduler.add_job(id='scheduled', func=scheduled, trigger = 'interval', minutes = 2)
 scheduler.start()

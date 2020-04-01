@@ -326,8 +326,9 @@ def scheduled():
 
         j.email(emails, jobs, employer, u['cv'], u['resume'], u['id'])
 
+scheduler.add_job(id='scheduled', func=scheduled, trigger = 'interval', minutes = 1)
+scheduler.start()
+
 if __name__ == "__main__":
-    scheduler.add_job(id='scheduled', func=scheduled, trigger = 'interval', minutes = 1)
-    scheduler.start()
     app.run(ssl_context="adhoc")
 

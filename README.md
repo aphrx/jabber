@@ -85,7 +85,8 @@ Now run gunicorn which will start the proxy serving connecting to the specific p
 # -D to demonize it in the background
 # after running app.pid will have the pid of the process
 # -b to to bind it to a specific ip so we can connect to it in nginx config
-gunicorn app:app -p app.pid -b 127.0.0.1:8000 -D
+# -w 3 add 3 workers
+gunicorn app:app -p app.pid -b 127.0.0.1:8000 -D -w 3
 
 # To kill gunicorn anytime
 kill -HUP `cat app.pid`

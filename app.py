@@ -13,6 +13,7 @@ import jobbankapply
 import cvgen
 from user import User
 from flask_pymongo import PyMongo
+from flask_apscheduler import APScheduler
 from oauthlib.oauth2 import WebApplicationClient
 from flask import (
     Flask,
@@ -45,6 +46,7 @@ login_manager.init_app(app)
 client = WebApplicationClient(secret.GOOGLE_CLIENT_ID)
 account = "Login"
 
+scheduler = APScheduler()
 
 @app.route("/")
 def index():
@@ -105,7 +107,18 @@ def profile():
                                         "resume": resume_data
                                     }})
             return redirect(url_for("profile"))
+        elif request.method == 'POST' and 'keyword_cron' in request.form:
+            keyword_cron = request.form['keyword_cron']
+            location_cron = request.form['location_cron']
+            cron = {"cron_job": keyword_cron, "cron_loc": location_cron}
+            mongo.db.users.update_one({"id": session['user_id']},
+                                    {"$set": {
+                                        "cron": cron
+                                    }})
+            print("submitted")
+            return redirect(url_for("profile"))
         else:  # GET
+            print("else")
             linkedIn_ok = "false"
             cv_ok = "false"
             cv_data = ""
@@ -113,8 +126,6 @@ def profile():
             resume_data = ""
             if 'user_id' in session:
                 user = mongo.db.users.find_one({"id": session['user_id']})
-                if user["linkedIn"]["pwd"] != "":
-                    linkedIn_ok = "true"
                 if user["cv"] != "":
                     cv_ok = "true"
                     cv_data = user["cv"]
@@ -249,7 +260,6 @@ def gen_cv(job, employer):
                                mimetype='application/pdf')
     return redirect(url_for("login"))
 
-
 @app.route('/search-easy', methods=['POST'])
 def search_easy():
     
@@ -284,17 +294,39 @@ def search_easy():
         return render_template('easy-apply.html', count=count, account=account, output=output)
     return redirect(url_for("login"))
 
-
 # flask-login helper to retrieve a user from our db
 @login_manager.user_loader
 def load_user(user_id):
     return User.get(user_id, mongo)
 
-
 @login_manager.unauthorized_handler
 def unauthorized():
     return render_template("index.html", login_err="yep")
 
+def scheduled():
+    users = mongo.db.users.find({'cron': { "$exists": True} })
+
+    for u in users:
+        print(u['cron']['cron_job'])
+
+        test = scraper.scrape()
+
+        jobs = []
+        employer = []
+        links = []
+
+        jobs, employer, links, count = test.search(u['cron']['cron_job'], u['cron']['cron_loc'], True)
+
+        j = jobbankapply.apply(links)
+        emails, jobs, employer = j.run()
+        print(emails)
+        print(jobs)
+        print(employer)
+
+        j.email(emails, jobs, employer, u['cv'], u['resume'], u['id'])
 
 if __name__ == "__main__":
+    scheduler.add_job(id='scheduled', func=scheduled, trigger = 'interval', minutes = 1)
+    scheduler.start()
     app.run(ssl_context="adhoc")
+

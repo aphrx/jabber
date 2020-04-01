@@ -31,5 +31,9 @@ class User(UserMixin):
             },
             "cv": "",
             "resume": "",
+            "cron":{
+                "cron_job": "",
+                "cron_loc": "",
+            }
         }
         mongo.db.users.insert(user)

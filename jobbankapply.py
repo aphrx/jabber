@@ -65,12 +65,6 @@ class apply:
 		print("emailing")
 		
 		for i in range(len(emails)):
-
-			print(cv_data)
-			print(resume)
-			print(jobs[i])
-			print(employer[i])
-			print(user)
 			
 			message = Mail(
 			    from_email='hire@jabber.store',

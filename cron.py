@@ -6,9 +6,9 @@ client = MongoClient('mongodb://localhost:27017')
 db = client['jabberDatabase']
 users = db.users
 
-mongo.db.users.find({'cron': { "$exists": True} })
+users.find({'cron': { "$exists": True} })
 
-users = mongo.db.users.find({'cron': { "$exists": True} })
+users = db.users.find({'cron': { "$exists": True} })
 
 for u in users:
     print(u['cron']['cron_job'])

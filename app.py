@@ -332,7 +332,7 @@ def scheduled():
 
         j.email(emails, jobs, employer, cv_data, resume, u['id'])
 
-scheduler.add_job(id='scheduled', func=scheduled, trigger = 'interval', minutes = 2)
+scheduler.add_job(id='scheduled', func=scheduled, trigger = 'interval', seconds = 1)
 scheduler.start()
 
 if __name__ == "__main__":

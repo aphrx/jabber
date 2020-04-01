@@ -304,6 +304,7 @@ def unauthorized():
     return render_template("index.html", login_err="yep")
 
 def scheduled():
+    print("running cron")
     users = mongo.db.users.find({'cron': { "$exists": True} })
 
     for u in users:

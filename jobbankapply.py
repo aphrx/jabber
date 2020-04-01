@@ -63,6 +63,7 @@ class apply:
 
 	def email(self, emails, jobs, employer, cv_data, resume, user):
 		print("emailing")
+
 		for i in range(len(emails)):
 			
 			message = Mail(
@@ -72,15 +73,15 @@ class apply:
 			    html_content='<p>To whoever this may concern,</p><p>Attached below is a copy of a resume & cover letter for a qualified candidate for your position at ' + str(employer[i]) + ' for the position of ' + str(jobs[i]) +'. We have contacted you through your listed email at ' + str(emails[i]) +'</p><p>Thank you for your consideration,</p><p>The Jabber Team</p>')
 				#html_content='Attached below is a copy of a resume & cover letter for a qualified candidate for your position at ' + str(employer[i]) + ' for the position of ' + str(jobs[i]) +'. We have contacted you through your listed email at ' + str(emails[i]))
 			
-			cv = cvgen.cvgen(cv_data, jobs[i], employer[i], "Toronto, ON", 'data/' + user +'CVE.pdf')
+			cv = cvgen.cvgen(str(cv_data), str(jobs[i]), str(employer[i]), "Toronto, ON", 'data/' + str(user) +'CVE.pdf')
 			cv.generate()
 
-			cv = cvgen.cvgen(resume, jobs[i], employer[i], "Toronto, ON", 'data/' + user +'RE.pdf')
+			cv = cvgen.cvgen(str(resume), str(jobs[i]), str(employer[i]), "Toronto, ON", 'data/' + str(user) +'RE.pdf')
 			cv.generate()
 
 			file_path = user + 'CVE.pdf'
 			
-			with open('data/' + file_path, 'rb') as f:
+			with open('data/' + str(file_path), 'rb') as f:
 			    data = f.read()
 			    f.close()
 			encoded = base64.b64encode(data).decode()
@@ -92,7 +93,7 @@ class apply:
 			attachment.content_id = ContentId('Example Content ID')
 			message.attachment = attachment
 
-			file_path = user + 'RE.pdf'
+			file_path = str(user) + 'RE.pdf'
 			
 			with open('data/' + file_path, 'rb') as f:
 			    data = f.read()

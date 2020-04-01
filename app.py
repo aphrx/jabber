@@ -12,6 +12,7 @@ import scraper
 import jobbankapply
 import cvgen
 from user import User
+from datetime import datetime
 from flask_pymongo import PyMongo
 from flask_apscheduler import APScheduler
 from oauthlib.oauth2 import WebApplicationClient
@@ -262,6 +263,10 @@ def gen_cv(job, employer):
 
 @app.route('/search-easy', methods=['POST'])
 def search_easy():
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+    print("Easy Apply Executed at " + dt_string)
     
     output = "Applied to X jobs"
     global account
@@ -286,9 +291,6 @@ def search_easy():
 
         j = jobbankapply.apply(jobs[2])
         emails, jobs, employer = j.run()
-        print(emails)
-        print(jobs)
-        print(employer)
 
         j.email(emails, jobs, employer, cv_data, resume, session['user_id'])
         return render_template('easy-apply.html', count=count, account=account, output=output)
@@ -304,12 +306,13 @@ def unauthorized():
     return render_template("index.html", login_err="yep")
 
 def scheduled():
-    print("running cron")
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+    print("Cron Job Executed at " + dt_string)
     users = mongo.db.users.find({'cron': { "$exists": True} })
 
     for u in users:
-        print(u['cron']['cron_job'])
-
         test = scraper.scrape()
 
         jobs = []
@@ -320,9 +323,6 @@ def scheduled():
 
         j = jobbankapply.apply(links)
         emails, jobs, employer = j.run()
-        print(emails)
-        print(jobs)
-        print(employer)
 
         cv_data = u['cv']
         cv_data = cv_data.encode('latin-1', 'replace').decode('latin-1')

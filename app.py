@@ -292,7 +292,7 @@ def search_easy():
         j = jobbankapply.apply(jobs[2])
         emails, jobs, employer = j.run()
 
-        j.email(emails, jobs, employer, cv_data, resume, session['user_id'], user['email'])
+        j.email(emails, jobs, employer, cv_data, resume, session['user_id'])
         return render_template('easy-apply.html', count=count, account=account, output=output)
     return redirect(url_for("login"))
 
@@ -331,7 +331,7 @@ def scheduled():
         resume = u['resume']
         resume = resume.encode('latin-1', 'replace').decode('latin-1')
 
-        j.email(emails, jobs, employer, cv_data, resume, u['id'], u['email'])
+        j.email(emails, jobs, employer, cv_data, resume, u['id'])
 
 scheduler.add_job(id='scheduled', func=scheduled, trigger = 'interval', minutes = 5)
 scheduler.start()

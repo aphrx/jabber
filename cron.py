@@ -27,4 +27,4 @@ for u in users:
     print(jobs)
     print(employer)
 
-    j.email(emails, jobs, employer, u['cv'], u['resume'], u['id'], u['email'])
+    j.email(emails, jobs, employer, u['cv'], u['resume'], u['id'])

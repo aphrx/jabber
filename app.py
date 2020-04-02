@@ -292,7 +292,7 @@ def search_easy():
         j = jobbankapply.apply(jobs[2])
         emails, jobs, employer = j.run()
 
-        j.email(emails, jobs, employer, cv_data, resume, session['user_id'], u['email'])
+        j.email(emails, jobs, employer, cv_data, resume, session['user_id'], user['email'])
         return render_template('easy-apply.html', count=count, account=account, output=output)
     return redirect(url_for("login"))
 

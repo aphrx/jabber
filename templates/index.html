@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Jabber! automated job applications">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
@@ -31,24 +32,28 @@
         </div>
     </nav>
 
-    <div style="position: fixed;top:30%; width: 100%;" align="center">
-        <img width="220px" src="{{ url_for('static', filename='img/logo-black.png')}}">
-        <br>
-        <br>
-        <div>
-            <form class="form-inline justify-content-center" align="center" action="{{ url_for('search') }}" method="post">
-                <span><input type="text" placeholder="Keywords" class="form-control" name="keywrd">
-                    <input type="text" placeholder="Location" class="form-control" name="location"><br><br>
-                    <input type="submit" value="Search" class="btn" name="submit"></span>
-            </form>
+    <main id="main">
+        <div style="position: fixed;top:30%; width: 100%;" align="center">
+            <img alt="Jabber logo" width="220px" src="{{ url_for('static', filename='img/logo-black.png')}}">
+            <br>
+            <br>
+            <div>
+                <form class="form-inline justify-content-center" align="center" action="{{ url_for('search') }}" method="post">
+                    <span>
+                        <input type="text" placeholder="Keywords" class="form-control" name="keywrd">
+                        <input type="text" placeholder="Location" class="form-control" name="location"><br><br>
+                        <input type="submit" value="Search" class="btn" name="submit">
+                    </span>
+                </form>
+            </div>
         </div>
-    </div>
+    </main>
 
 
     {% if login_err %}
     <div style="position: fixed;bottom:1%; width: 40%;" class="alert alert-danger alert-dismissible" role="alert" align="center">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <strong>Oh snap!</strong> Please login 
+        <strong>Oh snap!</strong> Please login
     </div>
     {% endif %}
 

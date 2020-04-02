@@ -61,14 +61,13 @@ class apply:
 
 		return emails, titles, occ
 
-	def email(self, emails, jobs, employer, cv_data, resume, user):
-		print("emailing")
+	def email(self, emails, jobs, employer, cv_data, resume, user, email):
 		
 		for i in range(len(emails)):
 			
 			message = Mail(
 			    from_email='hire@jabber.store',
-			    to_emails=secret.SENDER,
+			    to_emails=str(email),
 			    subject='Resume',
 			    html_content='<p>To whoever this may concern,</p><p>Attached below is a copy of a resume & cover letter for a qualified candidate for your position at ' + str(employer[i]) + ' for the position of ' + str(jobs[i]) +'. We have contacted you through your listed email at ' + str(emails[i]) +'</p><p>Thank you for your consideration,</p><p>The Jabber Team</p>')
 				#html_content='Attached below is a copy of a resume & cover letter for a qualified candidate for your position at ' + str(employer[i]) + ' for the position of ' + str(jobs[i]) +'. We have contacted you through your listed email at ' + str(emails[i]))
@@ -118,7 +117,7 @@ class apply:
 		
 		message = Mail(
 			from_email='hire@jabber.store',
-			to_emails=secret.SENDER,
+			to_emails=str(email),
 			subject='Resume',
 			html_content='<p>Hello,</p><p>Our automated service has executed and applied you for the following roles:</p> ' + str(employer) + ' <br> ' + str(jobs) +'<p>Thank you for using our service,</p><p>The Jabber Team</p>')
 			

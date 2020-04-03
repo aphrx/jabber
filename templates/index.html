@@ -11,6 +11,7 @@
 </head>
 
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,13 +32,14 @@
             </div>
         </div>
     </nav>
-
     <main id="main">
         <div style="position: fixed;top:30%; width: 100%;" align="center">
+            <!-- Jabber Logo -->
             <img alt="Jabber logo" width="220px" src="{{ url_for('static', filename='img/logo-black.png')}}">
             <br>
             <br>
             <div>
+                <!-- Search Form -->
                 <form class="form-inline justify-content-center" align="center" action="{{ url_for('search') }}" method="post">
                     <span>
                         <input type="text" placeholder="Keywords" class="form-control" name="keywrd">

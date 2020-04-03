@@ -7,6 +7,8 @@
 {% block body %}
 <br>
 <div>
+    
+    <!-- Search Form-->
 	<form class="form-inline justify-content-center" align="center" action="{{ url_for('search') }}" method="post">
 		<span><input type="text" placeholder="Keywords"class="form-control" name="keywrd">
 		<input type="text" placeholder="Location" class="form-control" name="location">
@@ -16,6 +18,7 @@
 <br>
 {% for x in range(count) %}
 
+<!-- Job Card Template -->
 <br>
 <div class="d-flex justify-content-center">
     <div class="gradient-border">

@@ -1,6 +1,8 @@
 from fpdf import FPDF
 
 class cvgen:
+
+	# variables needed to create cv
 	def __init__(self, body, occ, employer, loc, title):
 		self.body = body
 		self.occupation = occ
@@ -10,13 +12,13 @@ class cvgen:
 
 	def generate(self):
 
+		# replace variables in body where placeholders exist
 		modBody = self.body
-
 		modBody = modBody.replace("XXX", self.occupation)
 		modBody = modBody.replace("YYY", self.employer)
 		modBody = modBody.replace("ZZZ", self.location)
-		#modBody = modBody.replace("  ", "\n")
 
+		# Generate CV
 		pdf = FPDF()
 		pdf.add_page()
 		pdf.set_font("Arial", size=11)

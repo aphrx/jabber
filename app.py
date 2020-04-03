@@ -58,14 +58,16 @@ def index():
 
 @app.route("/postings")
 def postings():
+    # If not logged in, show Login button
     global account
     account = "Login"
     if 'user_id' in session:
         account = "Settings"
+    
+    # By default, scrape for Developer jobs in toronto
     test = scraper.scrape()
     jobs = [[], [], []]
-    jobs[0], jobs[1], jobs[2], count = test.search("Developer", "Toronto",
-                                                   False)
+    jobs[0], jobs[1], jobs[2], count = test.search("Developer", "Toronto", False)
     return render_template('job_list.html',
                            jobs=jobs,
                            count=count,
@@ -74,6 +76,7 @@ def postings():
 
 @app.route("/easy-apply")
 def easy_apply():
+    # If not logged in, show Login button, otherwise show Settings and redirect to easy apply page
     global account
     account = "Login"
     if 'user_id' in session:
@@ -85,6 +88,8 @@ def easy_apply():
 @app.route("/profile", methods=['GET', 'POST'])
 def profile():
     if 'user_id' in session:
+
+        # if linkedin form was updated, update in mongodb
         if request.method == 'POST' and 'pwd' in request.form:
             email = request.form['email']
             pwd = request.form['pwd']
@@ -94,6 +99,8 @@ def profile():
                                         "linkedIn": linkedin_info
                                     }})
             return redirect(url_for("profile"))
+        
+        # if cv form was submitted, update in mongodb
         elif request.method == 'POST' and 'cv' in request.form:
             cv_data = request.form['cv']
             mongo.db.users.update_one({"id": session['user_id']},
@@ -101,6 +108,8 @@ def profile():
                                         "cv": cv_data
                                     }})
             return redirect(url_for("profile"))
+        
+        # If resume form was submitted, update in mongodb
         elif request.method == 'POST' and 'resume' in request.form:
             resume_data = request.form['resume']
             mongo.db.users.update_one({"id": session['user_id']},
@@ -108,6 +117,8 @@ def profile():
                                         "resume": resume_data
                                     }})
             return redirect(url_for("profile"))
+        
+        # if cron form was submitted, update in mongodb
         elif request.method == 'POST' and 'keyword_cron' in request.form:
             keyword_cron = request.form['keyword_cron']
             location_cron = request.form['location_cron']
@@ -116,15 +127,15 @@ def profile():
                                     {"$set": {
                                         "cron": cron
                                     }})
-            print("submitted")
             return redirect(url_for("profile"))
         else:  # GET
-            print("else")
             linkedIn_ok = "false"
             cv_ok = "false"
             cv_data = ""
             resume_ok = "false"
             resume_data = ""
+
+            # If user logged in, fetch data from mongodb
             if 'user_id' in session:
                 user = mongo.db.users.find_one({"id": session['user_id']})
                 if user["cv"] != "":
@@ -232,16 +243,20 @@ def logout():
 
 @app.route('/search', methods=['POST'])
 def search():
+    # If not logged in, show Login button, otherwise show Settinsg button
     global account
     account = "Login"
     if 'user_id' in session:
         account = "Settings"
+
+    # Get keyword and location from form and find jobs using scraper for jobs
     keywrd = request.form['keywrd']
     location = request.form['location']
-    print(keywrd + " " + location)
     test = scraper.scrape()
     jobs = [[], [], []]
     jobs[0], jobs[1], jobs[2], count = test.search(keywrd, location, False)
+
+    # send arrays to html template to display accordingly
     return render_template('job_list.html',
                            jobs=jobs,
                            count=count,
@@ -250,12 +265,17 @@ def search():
 @app.route('/gen-cv/<string:job>/<string:employer>')
 def gen_cv(job, employer):
     if 'user_id' in session:
+        # Find user's cv template
         user = mongo.db.users.find_one({"id": session['user_id']})
         if user["cv"] != "":
             cv_data = user["cv"]
         cv_data = cv_data.encode('latin-1', 'replace').decode('latin-1')
+
+        # Generate cv given cv, employer, job and location
         cv = cvgen.cvgen(cv_data, job, employer, "Toronto, ON", 'data/' + user['id'] +'CV.pdf')
         cv.generate()
+        
+        # Download CV
         return send_from_directory(directory="data",
                                filename= user['id'] +'CV.pdf',
                                mimetype='application/pdf')
@@ -263,35 +283,43 @@ def gen_cv(job, employer):
 
 @app.route('/search-easy', methods=['POST'])
 def search_easy():
+
+    # Keep track of when easy apply is deploted
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-
     print("Easy Apply Executed at " + dt_string)
     
     output = "Applied to X jobs"
+
+    # If not logged in, show Login button
     global account
     account = "Login"
     if 'user_id' in session:
+
+        # Find user entry from session
         user = mongo.db.users.find_one({"id": session['user_id']})
         account = "Settings"
+
+        # Get CV if not empty
         if user["cv"] != "":
             cv_data = user["cv"]
         cv_data = cv_data.encode('latin-1', 'replace').decode('latin-1')
 
+        # Get resume if not empty
         if user["resume"] != "":
             resume = user["resume"]
         resume = resume.encode('latin-1', 'replace').decode('latin-1')
 
+        # Get keyword and location from form and use them to scrape for jobs
         keywrd = request.form['keywrd']
         location = request.form['location']
-
         test = scraper.scrape()
         jobs = [[], [], []]
         jobs[0], jobs[1], jobs[2], count = test.search(keywrd, location, True)
-
         j = jobbankapply.apply(jobs[2])
         emails, jobs, employer = j.run()
 
+        # email users on list and redirect to page
         j.email(emails, jobs, employer, cv_data, resume, session['user_id'], user["email"])
         return render_template('easy-apply.html', count=count, account=account, output=output)
     return redirect(url_for("login"))
@@ -301,39 +329,43 @@ def search_easy():
 def load_user(user_id):
     return User.get(user_id, mongo)
 
+# redirect home if unauth
 @login_manager.unauthorized_handler
 def unauthorized():
     return render_template("index.html", login_err="yep")
 
 @app.route("/cron")
 def scheduled():
+
+    # print out time that cron job was deployed in console
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-
     print("Cron Job Executed at " + dt_string)
+
+    # Find users who signed up for cron job
     users = mongo.db.users.find({'cron': { "$exists": True} })
 
+    # For each user who has signed up for cron job, find jobs they are interested ibn
     for u in users:
         test = scraper.scrape()
-
         jobs = []
         employer = []
         links = []
-
         jobs, employer, links, count = test.search(u['cron']['cron_job'], u['cron']['cron_loc'], True)
-
         j = jobbankapply.apply(links)
         emails, jobs, employer = j.run()
 
+        # find user's cv and resume
         cv_data = u['cv']
         cv_data = cv_data.encode('latin-1', 'replace').decode('latin-1')
-
         resume = u['resume']
         resume = resume.encode('latin-1', 'replace').decode('latin-1')
 
+        # apply for jobs on behalf of user
         j.email(emails, jobs, employer, cv_data, resume, u['id'], u['email'])
 
-scheduler.add_job(id='scheduled', func=scheduled, trigger = 'interval', hours = 1)
+# start scheduler once a day for testing purpose (once a week for regular deployment)
+scheduler.add_job(id='scheduled', func=scheduled, trigger = 'interval', hours = 24)
 scheduler.start()
 
 if __name__ == "__main__":

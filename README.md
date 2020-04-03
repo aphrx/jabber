@@ -86,7 +86,9 @@ Now run gunicorn which will start the proxy serving connecting to the specific p
 # after running app.pid will have the pid of the process
 # -b to to bind it to a specific ip so we can connect to it in nginx config
 # -w 3 add 3 workers
-gunicorn app:app -p app.pid -b 127.0.0.1:8000 -D -w 3
+# --preload ensures that the code is preloaded beforehand and that each worker does not have a copy of the codebase
+# --timeout ensures that the timeout does not interfere with the easy apply feature 
+gunicorn app:app -w 3 -p app.pid -b 127.0.0.1:8000 --timeout 100000000 --preload
 
 # To kill gunicorn anytime
 kill -HUP `cat app.pid`
@@ -107,6 +109,10 @@ user = {
 	}
 	"cv": cv template text data
 	"resume": resume template text data
+	"cron":{
+                "cron_job": cron job keyword
+                "cron_loc": cron job location
+            }
 }
 ```
 

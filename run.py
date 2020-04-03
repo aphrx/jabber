@@ -1,19 +1,19 @@
+# Test scraper
+
 import scraper
-import linkedin_apply
 import jobbankapply
 
+# Find JobBank urls for applicable jobs
 test = scraper.scrape()
-
 jobs = []
 employer = []
 links = []
-
 jobs, employer, links, count = test.search("software developer", "toronto", True)
 
+# find job information and print out
 j = jobbankapply.apply(links)
 emails, jobs, employer = j.run()
 print(emails)
 print(jobs)
 print(employer)
 
-#j.email(emails, jobs, employer)
